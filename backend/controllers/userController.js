@@ -14,6 +14,7 @@ const generateToken = (id) => {
 // @route   POST /api/users/signup
 // @access  Public
 export const signupUser = asyncHandler(async (req, res) => {
+  console.log("Signup request body:", req.body);
   try {
     const { username, email, password } = req.body;
 
@@ -66,9 +67,18 @@ export const signupUser = asyncHandler(async (req, res) => {
         username: user.username,
         email: user.email,
       });
+    } else {
+      res.status(500).json({
+        message: "User creation failed",
+        success: false,
+      });
     }
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 });
 
@@ -114,6 +124,10 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 });
 

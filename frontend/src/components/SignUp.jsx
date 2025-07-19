@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { USER_API_END_POINT } from "../utils/constant";
 
 function SignUp() {
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
@@ -15,11 +17,11 @@ function SignUp() {
             return;
         }
         try {
-            const res = await fetch("/api/users/signup", {
+            const res = await fetch(`${USER_API_END_POINT}/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ username, email, password }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Signup failed");
@@ -52,6 +54,23 @@ function SignUp() {
                 <form className="bg-white p-6" onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label
+                            htmlFor="username"
+                            className="block text-sm font-semibold text-gray-900 mb-1"
+                        >
+                            Username
+                        </label>
+                        <input
+                            id="username"
+                            type="text"
+                            placeholder="Your username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="w-full bg-gray-200 placeholder-gray-500 text-gray-900 text-sm px-3 py-2 focus:outline-none"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label
                             htmlFor="email"
                             className="block text-sm font-semibold text-gray-900 mb-1"
                         >
@@ -67,7 +86,6 @@ function SignUp() {
                             required
                         />
                     </div>
-
                     <div className="mb-4">
                         <label
                             htmlFor="password"
@@ -84,7 +102,6 @@ function SignUp() {
                             required
                         />
                     </div>
-
                     <div className="mb-4">
                         <label
                             htmlFor="confirm"
@@ -101,9 +118,7 @@ function SignUp() {
                             required
                         />
                     </div>
-
                     {error && <div className="text-red-500 mb-2">{error}</div>}
-
                     <button
                         type="submit"
                         className="w-full bg-purple-600 text-white font-semibold py-2 rounded-sm hover:bg-purple-700 transition"

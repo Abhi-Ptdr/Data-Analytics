@@ -1,15 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { USER_API_END_POINT } from "../utils/constant";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    alert("Sign-in attempted!\n(Connect to backend to authenticate)");
+    setError("");
+    try {
+      const res = await fetch(`${USER_API_END_POINT}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
+      // Optionally store user info in state/context
+      navigate("/dashboard"); // Redirect to dashboard or landing page
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -82,6 +97,8 @@ function SignIn() {
               Remember me for 30 days
             </label>
           </div>
+
+          {error && <div className="text-red-500 mb-2">{error}</div>}
 
           <button
             type="submit"
