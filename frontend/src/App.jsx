@@ -11,7 +11,7 @@ function App() {
         <Route path="/" element={<ExcelVisualizer />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<ExcelUpload />} />
+        <Route path="/analyze" element={<ExcelUpload />} />
       </Routes>
     </Router>
   );

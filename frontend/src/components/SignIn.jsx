@@ -24,7 +24,7 @@ function SignIn() {
         localStorage.setItem("token", data.token);
       }
       // Optionally store user info in state/context
-      navigate("/dashboard"); // Redirect to dashboard or landing page
+      navigate("/analyze"); // Redirect to analysis page
     } catch (err) {
       setError(err.message);
     }
