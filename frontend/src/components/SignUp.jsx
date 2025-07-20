@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { USER_API_END_POINT } from "../utils/constant";
+// import { USER_API_END_POINT } from "../utils/constant";
 
 function SignUp() {
     const [username, setUsername] = useState("");
@@ -17,7 +17,7 @@ function SignUp() {
             return;
         }
         try {
-            const res = await fetch(`${USER_API_END_POINT}/signup`, {
+            const res = await fetch("/api/users/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -25,6 +25,9 @@ function SignUp() {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Signup failed");
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+            }
             alert("Signup successful! You can now sign in.");
             window.location.href = "/signin";
         } catch (err) {

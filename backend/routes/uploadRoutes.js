@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 // Routes
-router.post('/',protect, uploadFile); // Upload and parse Excel file
+router.post('/', protect, ...uploadFile); // Upload and parse Excel file
 router.get('/', protect, getUserUploads); // Get all uploaded files for the authenticated user
 
 export default router;

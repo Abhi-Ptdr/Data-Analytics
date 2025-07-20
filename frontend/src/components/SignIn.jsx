@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { USER_API_END_POINT } from "../utils/constant";
+// import { USER_API_END_POINT } from "../utils/constant";
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -12,14 +12,17 @@ function SignIn() {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch(`${USER_API_END_POINT}/login`, {
+      const res = await fetch("/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        withCredentials: true,
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
       // Optionally store user info in state/context
       navigate("/dashboard"); // Redirect to dashboard or landing page
     } catch (err) {

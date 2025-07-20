@@ -54,10 +54,17 @@ export const signupUser = asyncHandler(async (req, res) => {
     if (user) {
       const token = generateToken(user._id);
 
+      // res.cookie("token", token, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000,
+      // });
+
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        secure: false, // Always false for localhost (not https)
+        sameSite: "None", // "Lax" is best for localhost
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -101,10 +108,17 @@ export const loginUser = asyncHandler(async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = generateToken(user._id);
 
+      // res.cookie("token", token, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000,
+      // });
+
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        secure: false, // Always false for localhost (not https)
+        sameSite: "None", // "Lax" is best for localhost
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -113,6 +127,7 @@ export const loginUser = asyncHandler(async (req, res) => {
         _id: user._id,
         username: user.username,
         email: user.email,
+        token,
       });
       
     } else {
