@@ -5,7 +5,6 @@ const Dashboard = () => {
   const [analyses, setAnalyses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0); // Add refresh key
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
@@ -32,20 +31,12 @@ const Dashboard = () => {
       setLoading(false);
     }
   }, []);
-  // Refresh data every 30 seconds
+  // Initial data fetch
   useEffect(() => {
     fetchDashboardData();
-    const interval = setInterval(() => {
-      setRefreshKey(prev => prev + 1);
-    }, 30000);
-    return () => clearInterval(interval);
   }, [fetchDashboardData]);
-  // Fetch data when refreshKey changes
-  useEffect(() => {
-    fetchDashboardData();
-  }, [refreshKey, fetchDashboardData]);
   const handleManualRefresh = () => {
-    setRefreshKey(prev => prev + 1);
+    fetchDashboardData();
   };
   if (loading) return <div className="text-center p-8">Loading...</div>;
   if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
@@ -78,7 +69,10 @@ const Dashboard = () => {
             <p className="text-gray-500">No files uploaded yet</p>
           ) : (
             <div className="grid gap-4">
-              {uploads.slice(0, 5).map((upload) => (
+              {uploads
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 5)
+                .map((upload) => (
                 <div key={upload._id} className="flex items-center justify-between border-b pb-4">
                   <div>
                     <p className="font-medium text-gray-900">{upload.fileName}</p>
@@ -86,7 +80,7 @@ const Dashboard = () => {
                       Uploaded on {new Date(upload.createdAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <span className="text-sm text-gray-500">{upload.fileSize} bytes</span>
+                  <span className="text-sm text-gray-500">{(upload.fileSize)/1000} KB</span>
                 </div>
               ))}
             </div>
