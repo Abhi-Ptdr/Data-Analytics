@@ -260,22 +260,55 @@ const ExcelUpload = ({ onUpload }) => {
                       return null;
                     })()}
                   </div>
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => {
-                        const chart = chartRef.current;
-                        if (chart) {
-                          const link = document.createElement("a");
-                          link.href = chart.toBase64Image();
-                          link.download = `${chartType}-chart.png`;
-                          link.click();
-                        }
-                      }}
-                      className="bg-indigo-700 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition cursor-pointer"
-                    >
-                      Download Chart
-                    </button>
-                  </div>
+                  <div className="mt-4 flex justify-between">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const token = localStorage.getItem("token");
+                            const response = await fetch("/api/analysis", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                              },
+                              body: JSON.stringify({
+                                uploadId: uploadedFile._id,
+                                xAxis,
+                                yAxis,
+                                chartType,
+                                aiSummary: "", // Optional: Add AI summary if implemented
+                              }),
+                            });
+                            
+                            if (!response.ok) {
+                              throw new Error("Failed to save analysis");
+                            }
+                            
+                            alert("Analysis saved successfully!");
+                          } catch (error) {
+                            console.error("Error saving analysis:", error);
+                            alert("Failed to save analysis");
+                          }
+                        }}
+                        className="bg-green-600 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-green-700 transition cursor-pointer"
+                      >
+                        Save Analysis
+                      </button>
+                      <button
+                        onClick={() => {
+                          const chart = chartRef.current;
+                          if (chart) {
+                            const link = document.createElement("a");
+                            link.href = chart.toBase64Image();
+                            link.download = `${chartType}-chart.png`;
+                            link.click();
+                          }
+                        }}
+                        className="bg-indigo-700 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition cursor-pointer"
+                      >
+                        Download Chart
+                      </button>
+                    </div>
                 </div>
               )}
             </div>
