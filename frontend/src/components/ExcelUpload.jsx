@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRef } from "react";
 import { Bar, Line, Pie, Scatter } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend } from "chart.js";
 
@@ -22,6 +23,8 @@ const ExcelUpload = ({ onUpload }) => {
   const [xAxis, setXAxis] = useState("");
   const [yAxis, setYAxis] = useState("");
   const [chartType, setChartType] = useState("bar");
+
+  const chartRef = useRef(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -92,7 +95,7 @@ const ExcelUpload = ({ onUpload }) => {
           )}
           <button
             type="submit"
-            className="bg-indigo-700 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition"
+            className="bg-indigo-700 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition cursor-pointer"
           >
             Upload
           </button>
@@ -207,7 +210,7 @@ const ExcelUpload = ({ onUpload }) => {
                             },
                           ],
                         };
-                        return <Pie data={chartData} />;
+                        return <Pie ref={chartRef} data={chartData} />;
                       } else if (chartType === "bar") {
                         chartData = {
                           labels,
@@ -222,7 +225,7 @@ const ExcelUpload = ({ onUpload }) => {
                             },
                           ],
                         };
-                        return <Bar data={chartData} />;
+                        return <Bar ref={chartRef} data={chartData} />;
                       } else if (chartType === "line") {
                         chartData = {
                           labels,
@@ -237,7 +240,7 @@ const ExcelUpload = ({ onUpload }) => {
                             },
                           ],
                         };
-                        return <Line data={chartData} />;
+                        return <Line ref={chartRef} data={chartData} />;
                       } else if (chartType === "scatter") {
                         chartData = {
                           labels,
@@ -252,10 +255,26 @@ const ExcelUpload = ({ onUpload }) => {
                             },
                           ],
                         };
-                        return <Scatter data={chartData} />;
+                        return <Scatter ref={chartRef} data={chartData} />;
                       }
                       return null;
                     })()}
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={() => {
+                        const chart = chartRef.current;
+                        if (chart) {
+                          const link = document.createElement("a");
+                          link.href = chart.toBase64Image();
+                          link.download = `${chartType}-chart.png`;
+                          link.click();
+                        }
+                      }}
+                      className="bg-indigo-700 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition cursor-pointer"
+                    >
+                      Download Chart
+                    </button>
                   </div>
                 </div>
               )}
