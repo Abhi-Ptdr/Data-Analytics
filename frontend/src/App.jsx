@@ -3,6 +3,7 @@ import SignIn from './components/SignIn';
 import ExcelVisualizer from './components/ExcelVisualizer';
 import SignUp from './components/SignUp';
 import ExcelUpload from './components/ExcelUpload';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/analyze" element={<ExcelUpload />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );

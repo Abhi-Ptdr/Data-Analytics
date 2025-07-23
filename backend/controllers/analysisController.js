@@ -31,7 +31,10 @@ export const saveAnalysis = asyncHandler(async (req, res) => {
 // @route   GET /api/analysis
 // @access  Private
 export const getAnalysisHistory = asyncHandler(async (req, res) => {
-  const analysisHistory = await Analysis.find({ user: req.user._id }).populate("upload", "fileName");
+  const analysisHistory = await Analysis.find({ user: req.user._id })
+    .populate('upload', 'fileName')
+    .sort('-createdAt')
+    .limit(5);
   res.status(200).json(analysisHistory);
 });
 
