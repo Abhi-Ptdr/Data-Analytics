@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRef } from "react";
 import { Bar, Line, Pie, Scatter } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend } from "chart.js";
+import Navbar from "./Navbar";
 
 ChartJS.register(
   CategoryScale,
@@ -78,6 +79,7 @@ const ExcelUpload = ({ onUpload }) => {
 
   return (
     <>
+      <Navbar/>
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm max-w-6xl mx-auto mt-10">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Excel File</h2>
         <form onSubmit={handleUpload} className="flex flex-col gap-4">

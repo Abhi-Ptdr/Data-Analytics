@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import Navbar from './Navbar';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -67,7 +68,9 @@ const Dashboard = () => {
   if (loading) return <div className="text-center p-8">Loading...</div>;
   if (error) return <div className="text-red-500 text-center p-8">{error}</div>;
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div>
+      <Navbar />
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
         <div className="flex gap-4">
@@ -270,6 +273,7 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

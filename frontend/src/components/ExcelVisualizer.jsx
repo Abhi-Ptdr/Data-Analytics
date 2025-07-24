@@ -1,10 +1,13 @@
 import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Link } from 'react-router-dom';
+import Navbar from './Navbar';
 
 
 const ExcelVisualizer = () => {
   return (
+    <>
+      <Navbar />
     <div className="bg-white text-gray-900 font-sans">
       <div className="pt-10 pb-20">
         {/* Top Section */}
@@ -144,6 +147,7 @@ const ExcelVisualizer = () => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 
