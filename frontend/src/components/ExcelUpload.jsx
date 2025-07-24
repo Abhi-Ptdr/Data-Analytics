@@ -80,7 +80,7 @@ const ExcelUpload = ({ onUpload }) => {
   return (
     <>
       <Navbar />
-      <div className="max-w-6xl mx-auto px-4 py-10 space-y-10">
+      <div className="max-w-6xl mx-auto px-4 py-10 space-y-10 mt-15">
         {/* Upload Form Card */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-md">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">

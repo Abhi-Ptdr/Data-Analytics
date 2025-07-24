@@ -18,7 +18,7 @@ const ExcelVisualizer = () => {
   return (
     <>
       <Navbar />
-    <div className="bg-white text-gray-900 font-sans">
+    <div className="bg-white text-gray-900 font-sans mt-15">
       <div className="pt-10 pb-20">
         {/* Top Section */}
         <section className='max-w-7xl mx-auto px-6 sm:px-10 md:px-16 lg:px-20 xl:px-24 '>
