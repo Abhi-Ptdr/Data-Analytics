@@ -2,6 +2,7 @@ import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 
 const ExcelVisualizer = () => {
@@ -146,7 +147,8 @@ const ExcelVisualizer = () => {
           </div>
         </section>
       </div>
-    </div>
+      </div>
+    <Footer />
     </>
   );
 };

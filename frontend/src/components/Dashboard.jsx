@@ -14,6 +14,7 @@ import {
   Legend
 } from 'chart.js';
 import Navbar from './Navbar';
+import Footer from './Footer';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -274,6 +275,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
+    <Footer />
     </div>
   );
 };

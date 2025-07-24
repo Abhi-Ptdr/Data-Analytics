@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Bar, Line, Pie, Scatter } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend } from "chart.js";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 ChartJS.register(
   CategoryScale,
@@ -317,6 +318,7 @@ const ExcelUpload = ({ onUpload }) => {
           </>
         )}
       </div>
+      <Footer />
     </>
   );
 };
