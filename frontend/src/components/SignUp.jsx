@@ -38,15 +38,6 @@ function SignUp() {
     return (
         <div className="bg-[#e3e3e3] min-h-screen flex flex-col justify-center items-center px-4 font-['Inter']">
             <div className="max-w-md w-full">
-                <div className="flex justify-center mb-6">
-                    <img
-                        src="https://storage.googleapis.com/a1aa/image/b57c8051-2afd-4bc2-087f-cdfd5c24238f.jpg"
-                        width="80"
-                        height="80"
-                        alt="Logo"
-                        className="w-20 h-20"
-                    />
-                </div>
                 <h1 className="text-2xl font-extrabold text-gray-900 text-center mb-1">
                     Excel Analytics Platform
                 </h1>
@@ -124,7 +115,7 @@ function SignUp() {
                     {error && <div className="text-red-500 mb-2">{error}</div>}
                     <button
                         type="submit"
-                        className="w-full bg-purple-600 text-white font-semibold py-2 rounded-sm hover:bg-purple-700 transition"
+                        className="cursor-pointer w-full bg-indigo-700 text-white font-semibold py-2 rounded-sm hover:bg-indigo-800 transition"
                     >
                         Sign up
                     </button>
@@ -152,7 +143,7 @@ function SignUp() {
 
                 <p className="text-center text-gray-500 text-sm my-2">
                     Already have an account?{" "}
-                    <Link to="/signin" className="text-purple-600 hover:underline">
+                    <Link to="/signin" className="text-indigo-700 hover:underline">
                         Sign in
                     </Link>
                 </p>

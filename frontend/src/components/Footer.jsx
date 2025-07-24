@@ -4,11 +4,11 @@ import { SiLeetcode } from "react-icons/si";
 function Footer() {
   return (
     <div>
-        <footer className="footer mt-auto bg-gray-900 w-full">
+        <footer className="footer mt-auto bg-gradient-to-r from-slate-950 to-indigo-950 shadow-lg w-full">
         <div className="mt-auto w-full max-w-[1200px] py-10 px-4 sm:px-6 lg:px-8 lg:pt-20 mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             <div className="col-span-full lg:col-span-1">
-                <h1 className="text-white text-3xl underline font-bold" ><a href="/">Analyzer</a></h1>
+                <h1 className="text-gray-200 text-2xl underline font-bold" ><a href="/">ExcelVisualizer</a></h1>
             </div>
 
             <div className="col-span-1">
