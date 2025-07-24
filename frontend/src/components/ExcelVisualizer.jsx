@@ -1,11 +1,20 @@
 import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
 
 const ExcelVisualizer = () => {
+  const navigate = useNavigate();
+  const handleStartVisualizing = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/analyze');
+    } else {
+      navigate('/signin');
+    }
+  };
   return (
     <>
       <Navbar />
@@ -31,11 +40,9 @@ const ExcelVisualizer = () => {
                 Upload any Excel file and instantly generate interactive 2D and 3D charts with our intuitive analytics platform. No coding required.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link to="/signin">
-                  <button className="bg-indigo-700 text-white text-[13px] font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition cursor-pointer">
-                    Start Visualizing Now
-                  </button>
-                </Link>
+                <button onClick={handleStartVisualizing} className="bg-indigo-700 text-white text-[13px] font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition cursor-pointer">
+                  Start Visualizing Now
+                </button>
                 <a href="#key-features">
                   <button className="border border-gray-300 text-gray-700 text-[13px] font-semibold px-5 py-2 rounded-md hover:bg-gray-100 transition cursor-pointer">
                     See How It Works
@@ -133,7 +140,7 @@ const ExcelVisualizer = () => {
               <p className="mt-2 text-[12px] text-gray-500 max-w-xs">
                 Join thousands of professionals who are already unlocking insights from their spreadsheets.
               </p>
-              <button className="cursor-pointer mt-4 bg-indigo-700 text-white text-[13px] font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition">
+              <button onClick={handleStartVisualizing} className="cursor-pointer mt-4 bg-indigo-700 text-white text-[13px] font-semibold px-5 py-2 rounded-md hover:bg-indigo-800 transition">
                 Get Started For Free
               </button>
             </div>

@@ -1,9 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 const Navbar = () => {
-  // For simplicity, user is considered logged in if a token is present in localStorage.
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
   return (
     <nav className="bg-gray-100 p-4 shadow">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -27,11 +31,7 @@ const Navbar = () => {
             <>
               {/* Optionally add a logout button */}
               <button
-                onClick={() => {
-                  // Simply remove the token and refresh the page
-                  localStorage.removeItem('token');
-                  window.location.reload();
-                }}
+                onClick={handleLogout}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-1 mt-1 rounded-md transition ease-in-out duration-150 cursor-pointer"
               >
                 Logout
