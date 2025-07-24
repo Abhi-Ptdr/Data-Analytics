@@ -32,17 +32,17 @@ const Navbar = () => {
                   localStorage.removeItem('token');
                   window.location.reload();
                 }}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-1 rounded-md transition ease-in-out duration-150 cursor-pointer"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-1 mt-1 rounded-md transition ease-in-out duration-150 cursor-pointer"
               >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <Link to="/signin" className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-1 rounded-md transition ease-in-out duration-150 cursor-pointer">
+              <Link to="/signin" className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-1 mt-1 rounded-md transition ease-in-out duration-150 cursor-pointer">
                 Sign In
               </Link>
-              <Link to="/signup" className="border border-indigo-600 text-indigo-600 hover:bg-gray-200 px-4 py-1 rounded-md transition ease-in-out duration-150 cursor-pointer">
+              <Link to="/signup" className="border border-indigo-600 text-indigo-600 hover:bg-gray-200 px-4 py-1 mt-1 rounded-md transition ease-in-out duration-150 cursor-pointer">
                 Sign Up
               </Link>
             </>
