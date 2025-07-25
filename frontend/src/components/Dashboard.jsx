@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [analyses, setAnalyses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
   const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
@@ -179,7 +180,8 @@ const Dashboard = () => {
                                 <img
                                   src={analysis.chartImage}
                                   alt="Saved Chart"
-                                  className="w-full h-full object-contain"
+                                  className="w-full h-full object-contain cursor-pointer"
+                                  onClick={() => setSelectedImage(analysis.chartImage)}
                                 />
                               ) : (
                                 // Render dynamic chart if no image exists.
@@ -232,6 +234,27 @@ const Dashboard = () => {
           </>
         )}
       </main>
+      {/* Modal for Enlarged Chart Image */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-70"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative">
+            <img
+              src={selectedImage}
+              alt="Enlarged Chart"
+              className="max-w-full max-h-screen rounded-lg shadow-lg p-5"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-0 right-0 m-4 cursor-pointer text-gray-600 text-3xl leading-none"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );
