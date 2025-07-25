@@ -29,6 +29,7 @@ const analysisSchema = new mongoose.Schema({
   aiSummary: {
     type: String, // optional: if integrated with OpenAI
   },
+  chartImage: String,  // storing the base64 image string
   createdAt: {
     type: Date,
     default: Date.now,

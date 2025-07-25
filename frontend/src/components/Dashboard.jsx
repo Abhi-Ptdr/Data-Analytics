@@ -97,7 +97,7 @@ const Dashboard = () => {
             {/* Recent Uploads */}
             <div className="bg-white rounded-lg shadow mb-8">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Uploads</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Recent Uploads</h2>
               </div>
               <div className="p-6">
                 {uploads.length === 0 ? (
@@ -128,7 +128,7 @@ const Dashboard = () => {
             {/* Analysis Overview */}
             <div className="bg-white rounded-lg shadow mb-8">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Analysis Overview</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Analysis Overview</h2>
               </div>
               <div className="p-6">
                 {analyses.length === 0 ? (
@@ -141,8 +141,8 @@ const Dashboard = () => {
                         className="bg-gradient-to-r from-indigo-50 to-white p-4 rounded-lg shadow hover:shadow-lg transition duration-200"
                       >
                         <div className="mb-3">
-                          <h3 className="text-xl font-bold text-gray-900">
-                            {analysis.chartType} Chart
+                          <h3 className="text-lg font-bold text-gray-900">
+                            {analysis.chartType.charAt(0).toUpperCase() + analysis.chartType.slice(1)} Chart
                           </h3>
                           <p className="text-sm text-gray-600">
                             File: {analysis.upload?.fileName || 'Unknown file'}
@@ -225,45 +225,54 @@ const Dashboard = () => {
                       <div className="mt-6">
                         <p className="text-sm font-medium text-gray-500 mb-2">Chart Visualization</p>
                         <div className="bg-white p-4 rounded-lg border border-gray-200">
-                          {(() => {
-                            const data = selectedAnalysis.upload?.parsedData || [];
-                            if (!Array.isArray(data) || data.length === 0) {
-                              return <p className="text-gray-500">No chart data available</p>;
-                            }
-                            const labels = data.map((row) => row[selectedAnalysis.xAxis]);
-                            const dataPoints = data.map((row) => Number(row[selectedAnalysis.yAxis]));
-                            const colorPalette = [
-                              "#6366f1", "#f59e42", "#10b981", "#ef4444",
-                              "#3b82f6", "#f472b6", "#fbbf24", "#a78bfa",
-                              "#34d399", "#f87171"
-                            ];
-                            const chartData = {
-                              labels,
-                              datasets: [{
-                                label: `${selectedAnalysis.yAxis} vs ${selectedAnalysis.xAxis}`,
-                                data: dataPoints,
-                                backgroundColor: selectedAnalysis.chartType === 'pie'
-                                  ? colorPalette
-                                  : colorPalette[0],
-                                borderColor: selectedAnalysis.chartType === 'line'
-                                  ? colorPalette[0]
-                                  : colorPalette,
-                                borderWidth: 1
-                              }]
-                            };
-                            switch (selectedAnalysis.chartType) {
-                              case 'bar':
-                                return <Bar data={chartData} />;
-                              case 'line':
-                                return <Line data={chartData} />;
-                              case 'pie':
-                                return <Pie data={chartData} />;
-                              case 'scatter':
-                                return <Scatter data={chartData} />;
-                              default:
-                                return <Bar data={chartData} />;
-                            }
-                          })()}
+                          {/* If we have a saved chart image, display it. Otherwise, fall back to dynamic chart rendering */}
+                          {selectedAnalysis.chartImage ? (
+                            <img
+                              src={selectedAnalysis.chartImage}
+                              alt="Saved Chart"
+                              className="w-full h-auto"
+                            />
+                          ) : (
+                            (() => {
+                              const data = selectedAnalysis.upload?.parsedData || [];
+                              if (!Array.isArray(data) || data.length === 0) {
+                                return <p className="text-gray-500">No chart data available</p>;
+                              }
+                              const labels = data.map((row) => row[selectedAnalysis.xAxis]);
+                              const dataPoints = data.map((row) => Number(row[selectedAnalysis.yAxis]));
+                              const colorPalette = [
+                                "#6366f1", "#f59e42", "#10b981", "#ef4444",
+                                "#3b82f6", "#f472b6", "#fbbf24", "#a78bfa",
+                                "#34d399", "#f87171"
+                              ];
+                              const chartData = {
+                                labels,
+                                datasets: [{
+                                  label: `${selectedAnalysis.yAxis} vs ${selectedAnalysis.xAxis}`,
+                                  data: dataPoints,
+                                  backgroundColor: selectedAnalysis.chartType === 'pie'
+                                    ? colorPalette
+                                    : colorPalette[0],
+                                  borderColor: selectedAnalysis.chartType === 'line'
+                                    ? colorPalette[0]
+                                    : colorPalette,
+                                  borderWidth: 1
+                                }]
+                              };
+                              switch (selectedAnalysis.chartType) {
+                                case 'bar':
+                                  return <Bar data={chartData} />;
+                                case 'line':
+                                  return <Line data={chartData} />;
+                                case 'pie':
+                                  return <Pie data={chartData} />;
+                                case 'scatter':
+                                  return <Scatter data={chartData} />;
+                                default:
+                                  return <Bar data={chartData} />;
+                              }
+                            })()
+                          )}
                         </div>
                       </div>
                     </div>

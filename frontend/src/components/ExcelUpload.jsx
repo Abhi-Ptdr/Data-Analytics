@@ -325,6 +325,12 @@ const ExcelUpload = ({ onUpload }) => {
                       onClick={async () => {
                         try {
                           const token = localStorage.getItem("token");
+                          const chart = chartRef.current;
+                          // Check if chart exists and then get the base64 image string
+                          let chartImage = "";
+                          if (chart) {
+                            chartImage = chart.toBase64Image();
+                          }
                           const response = await fetch("/api/analysis", {
                             method: "POST",
                             headers: {
@@ -337,6 +343,7 @@ const ExcelUpload = ({ onUpload }) => {
                               yAxis,
                               chartType,
                               aiSummary: "",
+                              chartImage,  // saving the chart image as a base64 encoded string
                             }),
                           });
                           if (!response.ok) {

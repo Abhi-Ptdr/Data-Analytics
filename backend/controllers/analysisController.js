@@ -5,8 +5,7 @@ import Analysis from "../models/analysis.model.js";
 // @route   POST /api/analysis
 // @access  Private
 export const saveAnalysis = asyncHandler(async (req, res) => {
-  const { uploadId, xAxis, yAxis, chartType, aiSummary } = req.body;
-
+  const { uploadId, xAxis, yAxis, chartType, aiSummary, chartImage } = req.body;
   if (!uploadId || !xAxis || !yAxis || !chartType) {
     res.status(400);
     throw new Error("Missing required fields");
@@ -19,6 +18,7 @@ export const saveAnalysis = asyncHandler(async (req, res) => {
     yAxis,
     chartType,
     aiSummary,
+    chartImage, // new field to save the chart image (base64 encoded string)
   });
 
   res.status(201).json({
