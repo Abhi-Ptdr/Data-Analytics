@@ -14,24 +14,79 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+const FILE_STORAGE_KEY = "excelUploadFile";
+const CHART_SETTINGS_KEY = "excelChartSettings";
+// Read any stored chart settings as the initial state. 
+const getInitialChartSettings = () => {
+  try {
+    const stored = localStorage.getItem(CHART_SETTINGS_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error("Error reading chart settings", e);
+  }
+  return {};
+};
 const ExcelUpload = ({ onUpload }) => {
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(null);
   const [error, setError] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [columns, setColumns] = useState([]);
-  const [xAxis, setXAxis] = useState("");
-  const [yAxis, setYAxis] = useState("");
-  const [chartType, setChartType] = useState("bar");
-
+  
+  // Use stored chart settings for initial state if they exist
+  const initialSettings = getInitialChartSettings();
+  const [xAxis, setXAxis] = useState(initialSettings.xAxis || "");
+  const [yAxis, setYAxis] = useState(initialSettings.yAxis || "");
+  const [chartType, setChartType] = useState(initialSettings.chartType || "bar");
   const chartRef = useRef(null);
   const fileInputRef = useRef(null);
+  // Restore any uploaded file (and its columns) from localStorage on mount
+  useEffect(() => {
+    const storedFile = localStorage.getItem(FILE_STORAGE_KEY);
+    if (storedFile) {
+      try {
+        const parsedFile = JSON.parse(storedFile);
+        setUploadedFile(parsedFile);
+        if (parsedFile && parsedFile.parsedData && parsedFile.parsedData.length > 0) {
+          const cols = Object.keys(parsedFile.parsedData[0]);
+          setColumns(cols);
+        }
+      } catch (e) {
+        console.error("Error parsing stored file data", e);
+      }
+    }
+  }, []);
+  // When the columns update, check if the stored xAxis and yAxis still exist.
+  // If not, clear them.
+  useEffect(() => {
+    if (columns.length > 0) {
+      if (xAxis && !columns.includes(xAxis)) {
+        setXAxis("");
+      }
+      if (yAxis && !columns.includes(yAxis)) {
+        setYAxis("");
+      }
+    }
+  }, [columns]);
+  // Save chart settings to localStorage whenever they change
+  useEffect(() => {
+    const settings = { xAxis, yAxis, chartType };
+    localStorage.setItem(CHART_SETTINGS_KEY, JSON.stringify(settings));
+  }, [xAxis, yAxis, chartType]);
+  // Store the uploaded file in localStorage whenever it changes
+  useEffect(() => {
+    if (uploadedFile) {
+      localStorage.setItem(FILE_STORAGE_KEY, JSON.stringify(uploadedFile));
+    }
+  }, [uploadedFile]);
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
     setError("");
     setProgress(null);
     setUploadedFile(null);
+    localStorage.removeItem(FILE_STORAGE_KEY);
   };
 
   const handleUpload = async (e) => {
@@ -76,7 +131,67 @@ const ExcelUpload = ({ onUpload }) => {
       setProgress(null);
     }
   };
-
+  const renderChart = () => {
+    if (!uploadedFile || !uploadedFile.parsedData || !xAxis || !yAxis) return null;
+    const labels = uploadedFile.parsedData.map((row) => row[xAxis]);
+    const dataPoints = uploadedFile.parsedData.map((row) => Number(row[yAxis]));
+    const colorPalette = [
+      "#6366f1", "#f59e42", "#10b981", "#ef4444",
+      "#3b82f6", "#f472b6", "#fbbf24", "#a78bfa",
+      "#34d399", "#f87171", "#818cf8", "#facc15"
+    ];
+    const backgroundColors = labels.map((_, i) => colorPalette[i % colorPalette.length]);
+    let chartData;
+    if (chartType === "pie") {
+      chartData = {
+        labels,
+        datasets: [{
+          label: `${yAxis} vs ${xAxis}`,
+          data: dataPoints,
+          backgroundColor: backgroundColors,
+          borderColor: backgroundColors,
+        }],
+      };
+      return <Pie ref={chartRef} data={chartData} />;
+    } else if (chartType === "bar") {
+      chartData = {
+        labels,
+        datasets: [{
+          label: `${yAxis} vs ${xAxis}`,
+          data: dataPoints,
+          backgroundColor: backgroundColors,
+          borderColor: backgroundColors,
+          fill: true,
+        }],
+      };
+      return <Bar ref={chartRef} data={chartData} />;
+    } else if (chartType === "line") {
+      chartData = {
+        labels,
+        datasets: [{
+          label: `${yAxis} vs ${xAxis}`,
+          data: dataPoints,
+          backgroundColor: backgroundColors[0],
+          borderColor: backgroundColors[0],
+          fill: false,
+        }],
+      };
+      return <Line ref={chartRef} data={chartData} />;
+    } else if (chartType === "scatter") {
+      chartData = {
+        labels,
+        datasets: [{
+          label: `${yAxis} vs ${xAxis}`,
+          data: labels.map((label, i) => ({ x: label, y: dataPoints[i] })),
+          backgroundColor: backgroundColors,
+          borderColor: backgroundColors,
+          showLine: false,
+        }],
+      };
+      return <Scatter ref={chartRef} data={chartData} />;
+    }
+    return null;
+  };
   return (
     <>
       <Navbar />
@@ -117,7 +232,9 @@ const ExcelUpload = ({ onUpload }) => {
               </h3>
               <p className="text-sm text-gray-700">Name: {uploadedFile.fileName}</p>
               <p className="text-sm text-gray-700">Size: {uploadedFile.fileSize} bytes</p>
-              <p className="text-sm text-gray-700">Rows Parsed: {uploadedFile.parsedData.length}</p>
+              <p className="text-sm text-gray-700">
+                Rows Parsed: {uploadedFile.parsedData?.length}
+              </p>
               {/* Data Preview Table */}
               <div className="mt-5">
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Preview</h4>
@@ -156,12 +273,14 @@ const ExcelUpload = ({ onUpload }) => {
                   <label className="block text-sm font-semibold mb-1">X-Axis:</label>
                   <select
                     value={xAxis}
-                    onChange={e => setXAxis(e.target.value)}
+                    onChange={(e) => setXAxis(e.target.value)}
                     className="border rounded px-2 py-1"
                   >
                     <option value="">Select</option>
-                    {columns.map(col => (
-                      <option key={col} value={col}>{col}</option>
+                    {columns.map((col) => (
+                      <option key={col} value={col}>
+                        {col}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -169,12 +288,14 @@ const ExcelUpload = ({ onUpload }) => {
                   <label className="block text-sm font-semibold mb-1">Y-Axis:</label>
                   <select
                     value={yAxis}
-                    onChange={e => setYAxis(e.target.value)}
+                    onChange={(e) => setYAxis(e.target.value)}
                     className="border rounded px-2 py-1"
                   >
                     <option value="">Select</option>
-                    {columns.map(col => (
-                      <option key={col} value={col}>{col}</option>
+                    {columns.map((col) => (
+                      <option key={col} value={col}>
+                        {col}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -182,7 +303,7 @@ const ExcelUpload = ({ onUpload }) => {
                   <label className="block text-sm font-semibold mb-1">Chart Type:</label>
                   <select
                     value={chartType}
-                    onChange={e => setChartType(e.target.value)}
+                    onChange={(e) => setChartType(e.target.value)}
                     className="border rounded px-2 py-1"
                   >
                     <option value="bar">Bar</option>
@@ -197,68 +318,7 @@ const ExcelUpload = ({ onUpload }) => {
                 <div className="mt-8">
                   <h4 className="text-lg font-semibold text-gray-800 mb-2">Chart Preview</h4>
                   <div className="bg-white p-4 rounded shadow">
-                    {(() => {
-                      const labels = uploadedFile.parsedData.map(row => row[xAxis]);
-                      const dataPoints = uploadedFile.parsedData.map(row => Number(row[yAxis]));
-                      // Color palette for categories
-                      const colorPalette = [
-                        "#6366f1", "#f59e42", "#10b981", "#ef4444", "#3b82f6", "#f472b6",
-                        "#fbbf24", "#a78bfa", "#34d399", "#f87171", "#818cf8", "#facc15"
-                      ];
-                      // Assign color based on index
-                      const backgroundColors = labels.map((_, i) => colorPalette[i % colorPalette.length]);
-
-                      let chartData;
-                      if (chartType === "pie") {
-                        chartData = {
-                          labels,
-                          datasets: [{
-                            label: `${yAxis} vs ${xAxis}`,
-                            data: dataPoints,
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors,
-                          }],
-                        };
-                        return <Pie ref={chartRef} data={chartData} />;
-                      } else if (chartType === "bar") {
-                        chartData = {
-                          labels,
-                          datasets: [{
-                            label: `${yAxis} vs ${xAxis}`,
-                            data: dataPoints,
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors,
-                            fill: true,
-                          }],
-                        };
-                        return <Bar ref={chartRef} data={chartData} />;
-                      } else if (chartType === "line") {
-                        chartData = {
-                          labels,
-                          datasets: [{
-                            label: `${yAxis} vs ${xAxis}`,
-                            data: dataPoints,
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors,
-                            fill: false,
-                          }],
-                        };
-                        return <Line ref={chartRef} data={chartData} />;
-                      } else if (chartType === "scatter") {
-                        chartData = {
-                          labels,
-                          datasets: [{
-                            label: `${yAxis} vs ${xAxis}`,
-                            data: labels.map((label, i) => ({ x: label, y: dataPoints[i] })),
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors,
-                            showLine: false,
-                          }],
-                        };
-                        return <Scatter ref={chartRef} data={chartData} />;
-                      }
-                      return null;
-                    })()}
+                    {renderChart()}
                   </div>
                   <div className="mt-6 flex justify-between">
                     <button
@@ -276,7 +336,7 @@ const ExcelUpload = ({ onUpload }) => {
                               xAxis,
                               yAxis,
                               chartType,
-                              aiSummary: "", // Optional: add AI summary if available
+                              aiSummary: "",
                             }),
                           });
                           if (!response.ok) {
